@@ -1,0 +1,18 @@
+This driver is in beta stage and therefore, it's not stable and may not work with your printer.
+The libraries libusb, (lib)cups and jbigkit are needed in order to compile gurich.
+
+On Parabola GNU/Linux-libre or other Arch GNU/Linux-distributions:
+$ sudo pacman -Ss libusb jbigkit libcups
+
+Users of Debian GNU/Linux-like systems can use the utilities apt and apt-get.
+
+This driver is intended for *nix systems and maybe can be compiled using Cygwin,
+but no support for Windows is intended since the vendor's driver is already present there.
+
+As always with free software projects, no warranty.
+
+== Compiling ==
+$ make all
+
+If you wish to test the CUPS functionality which is currently in alpha stage:
+$ sudo make cups

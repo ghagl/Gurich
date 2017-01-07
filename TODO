@@ -1,0 +1,3 @@
+* Evaluate the system() call due to concerns over eventual environment spoofing in src/shworkaround.c
+* Full CUPS filter support in src/gurich.c
+* Full CUPS backend support in src/cbackend/cbackend.c
