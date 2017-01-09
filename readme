@@ -27,8 +27,8 @@ For other use cases, e.g seeing how much toner is left:
 
 $ ./bin/gurich -s
 [...]
-Printer state: GOOD / ENERGY SAVING MODE 2 / IDLE, reference: 0x31
-Printer toner information: 80 % left 
+Printer status: GOOD / ENERGY SAVING MODE 2 / IDLE, reference: 0x31
+Printer toner: 80 % left 
 Printed out pages (stats): 301
 
 $ ./bin/gurich -h

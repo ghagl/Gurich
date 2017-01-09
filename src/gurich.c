@@ -66,12 +66,12 @@ static void display_status(struct gurich_usb * g)
 	snprintf(
 		inkstr,
 		75,
-		"Printer toner information: %d %% left %s",
+		"Printer toner: %d %% left %s",
 		ink,
 		(ink <= 10 ? "- please consider buying more toner" : "")
 	);
 
-	printf("Printer state: %s, reference: 0x%hx\n", data.status, data.ref);
+	printf("Printer status: %s, reference: 0x%hx\n", data.status, data.ref);
 	puts(inkstr);
 	printf("Printed out pages (stats): %d\n", pr);
 }
