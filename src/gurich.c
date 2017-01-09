@@ -46,7 +46,6 @@ static void display_usage(const char * exec, bool cpr)
 	printf("print: %s -p [ps/pdf file, resolution (600|1200), copies, paper type (A4 is tested)]\n", exec);
 	printf("status: %s -s\n", exec);
 	printf("testpage: %s -t\n", exec);
-	printf("cups filter: %s -c [filter arguments] (wrapper for -p, does the same job)\n", exec);
 
 	if (cpr) {
 		puts("\nCopyright (c) 2016, 2017 Gustaf Haglund\n");
