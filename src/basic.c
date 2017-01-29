@@ -76,6 +76,10 @@ void check_printer_usb(struct gurich_usb * g)
 	ssize_t numusbdevs, i, err;
 
 	err = libusb_init(&g->ctx);
+	if (err) {
+		fprintf(stderr, "Can't initalize libusb\n\n");
+		exit(-1);
+	}
 	numusbdevs = libusb_get_device_list(g->ctx, &list);
 
 	for (i = 0; i < numusbdevs; ++i)
