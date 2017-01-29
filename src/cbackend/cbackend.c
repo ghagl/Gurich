@@ -12,7 +12,7 @@
 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
@@ -26,8 +26,8 @@
 
 static void tell_cups()
 {
-	printf("gurich://RICOH/SP 112 DDST?serial=X025M233243\n");
-	/* TODO: Tell cups correctly */
+	printf("direct gurich://RICOH/SP 112 DDST?serial=X025M233243\n");
+	/* TODO: A better way, this will not work currently */
 }
 
 int main(int argc, char ** argv)
@@ -48,7 +48,7 @@ int main(int argc, char ** argv)
 		return 0;
 	}
 
-	char binbuf[4096];
+	char binbuf[8192];
 	size_t readlen;
 	int fp = 0;
 

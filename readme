@@ -2,11 +2,11 @@ Gurich is a free printer driver for Ricoh SP112.
 Other printers in the Ricoh SP100/Ricoh SP110 series probably work too.
 
 In order to install this driver, please see the INSTALL file.
-Contributions to this project is welcome, but please follow the code style used in this driver.
+Contributions to this project are welcome, but please follow the code style used in this driver.
 
 If you want a driver with warranty, then use Ricoh's driver for Microsoft Windows.
 
-I am not affilated with or employed by Ricoh, this project is done in my spare time.
+I am not affilated with nor employed by Ricoh, this project is done in my spare time.
 All trademarks mentioned in this project are owned by their respective owner.
 
 == Features ==
@@ -29,7 +29,7 @@ For other use cases, e.g seeing how much toner is left:
 $ ./bin/gurich -s
 [...]
 Printer status: GOOD / ENERGY SAVING MODE 2 / IDLE, reference: 0x31
-Printer toner: 80 % left 
+Printer toner: 80 % left
 Printed out pages (stats): 301
 
 $ ./bin/gurich -h
@@ -38,7 +38,8 @@ print: ./bin/gurich -p [ps/pdf file, resolution (600|1200), copies, paper type (
 status: ./bin/gurich -s
 testpage: ./bin/gurich -t
 
-You might need to make a rule for udev in order to avoid running gurich with root privileges.
+You might need to make a rule for udev in order to avoid running gurich with root privileges,
+on GNU/Linux-based systems.
 
 == Thanks to ==
 Serge V Shistarev for the PPD file,

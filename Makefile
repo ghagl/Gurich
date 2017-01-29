@@ -18,20 +18,21 @@
 ##	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-DEBUG = -g3 -ggdb -fvar-tracking -fvar-tracking-assignments
-CC = gcc -Wall -pedantic -std=gnu99 #$(DEBUG)
-LIBS = $(shell pkg-config --cflags --libs libusb-1.0) -ljbig -lcups
+DEBUG = -D_DEBUG -g3 -ggdb -fvar-tracking
+CC = gcc -Wall -pedantic -std=gnu99 -I/usr/local/include $(DEBUG)
+LIBS = $(shell pkg-config --cflags libusb-1.0)
+FINAL_LIBS=$(shell pkg-config --libs libusb-1.0) -ljbig -lcups
 
 BIN = bin/gurich
 BIN_CBACKEND = bin/gurich_cbackend
 
-CFLAGS = -Isrc $(LIBS) -D_DEBUG #-D_NO_PRINT_USB
+CFLAGS = -Isrc $(LIBS) #-D_DEBUG -D_NO_PRINT_USB
 
 CBACKEND_DEPEND = src/prntother.o src/basic.o src/prntcommon.o
 
 all: $(patsubst src/%.c, src/%.o,$(wildcard src/*.c)) $(patsubst src/cbackend/%.c, src/cbackend/%.o,$(wildcard src/cbackend/*.c))
-	$(CC) $(CFLAGS) -o $(BIN) src/*.o  $(LIBS)
-	$(CC) $(CFLAGS) -o $(BIN_CBACKEND) $(CBACKEND_DEPEND) src/cbackend/*.o $(LIBS)
+	$(CC) $(CFLAGS) -o $(BIN) src/*.o  $(FINAL_LIBS)
+	$(CC) $(CFLAGS) -o $(BIN_CBACKEND) $(CBACKEND_DEPEND) src/cbackend/*.o $(FINAL_LIBS)
 
 dev:
 	rm src/*.o

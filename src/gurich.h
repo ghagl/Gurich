@@ -1,7 +1,7 @@
 /*
 
 				Gurich
-	**	Ricoh SP110 series driver **
+		**	Ricoh SP110 series driver **
 
 	Copyright (C) 2016, 2017 Gustaf Haglund <ghaglund@bahnhof.se>
 
@@ -12,7 +12,7 @@
 
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
@@ -48,7 +48,12 @@
 #endif
 
 #ifndef GURICH_TEMP_DIR_PERMISSION
-	#define GURICH_TEMP_DIR_PERMISSION 0644
+	#define GURICH_TEMP_DIR_PERMISSION 0666
+#endif
+
+#ifndef _D_EXACT_NAMLEN
+	/* For BSD systems. */
+	#define _D_EXACT_NAMLEN(d) strlen((d)->d_name)
 #endif
 
 struct gurich_usb {
@@ -116,7 +121,7 @@ void gurich_jbg(FILE *pbmFp,
 	struct gurich_pbm * pbm,
 	struct gurich_jbg_st *jbg);
 
-/* Printer communication functions */
+/* "Real" printer functions */
 struct gurich_status gurich_status(struct gurich_usb * g);
 unsigned short int gurich_toner(struct gurich_usb * g);
 size_t gurich_printed(struct gurich_usb * g);
