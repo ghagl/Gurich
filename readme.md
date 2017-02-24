@@ -5,6 +5,7 @@ Gurich is a free printer driver for Ricoh SP112.
 Other printers in the Ricoh SP100/Ricoh SP110 series probably work too.
 
 Contributions to this project are welcome, but please follow the code style used in this driver.
+
 In order to install this driver, please see the INSTALL file.
 
 
