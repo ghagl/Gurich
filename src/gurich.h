@@ -3,7 +3,7 @@
 				Gurich
 		**	Ricoh SP110 series driver **
 
-	Copyright (C) 2016, 2017 Gustaf Haglund <ghaglund@bahnhof.se>
+	Copyright (C) 2016, 2017 Gustaf Haglund <kontakt@ghaglund.se>
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@
 #include <jbig.h>
 #include <libusb.h>
 #include <cups/cups.h>
+#include <cups/backend.h>
 
 #include <prnt.h>
 
@@ -48,7 +49,8 @@
 #endif
 
 #ifndef GURICH_TEMP_DIR_PERMISSION
-	#define GURICH_TEMP_DIR_PERMISSION 0666
+	#define GURICH_TEMP_DIR_PERMISSION 0777
+	//0666
 #endif
 
 #ifndef _D_EXACT_NAMLEN
@@ -62,6 +64,8 @@ struct gurich_usb {
 	libusb_device *device;
 	unsigned int interface;
 	bool initialized;
+	uint64_t idProduct;
+	uint64_t iSerialNumber;
 };
 
 struct gurich_status {
@@ -92,7 +96,7 @@ struct gurich_transferdata {
 /* General functions */
 #define gurich_alloc_check(a) \
 if (a == NULL) { \
-	fprintf(stderr, "ERROR: Can't allocate memory (RAM). Quitting."); \
+	fprintf(stderr, "ERROR: Can't allocate memory (RAM). Quitting.\n"); \
 	exit(-1); \
 }
 #define gurich_alloc_set(a) *a = '\0'

@@ -3,7 +3,7 @@
 				Gurich
 	**	Ricoh SP110 series driver **
 
-	Copyright (C) 2016, 2017 Gustaf Haglund <ghaglund@bahnhof.se>
+	Copyright (C) 2016, 2017 Gustaf Haglund <kontakt@ghaglund.se>
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -44,14 +44,17 @@ static void init_msg()
 static void display_usage(const char * exec, bool cpr)
 {
 	printf("print: %s -p [ps/pdf file, resolution (600|1200), copies, paper type (A4 is tested)]\n", exec);
+	#ifndef _NO_USB
 	printf("status: %s -s\n", exec);
 	printf("testpage: %s -t\n", exec);
+	#endif
 
 	if (cpr) {
 		puts("\nCopyright (c) 2016, 2017 Gustaf Haglund\n");
 	}
 }
 
+#ifndef _NO_USB
 static void display_status(struct gurich_usb * g)
 {
 	struct gurich_status data;
@@ -75,6 +78,7 @@ static void display_status(struct gurich_usb * g)
 	puts(inkstr);
 	printf("Printed out pages (stats): %d\n", pr);
 }
+#endif
 
 static void nofilter_print(struct gurich_usb * g, int argc, char ** argv)
 {
@@ -111,6 +115,7 @@ static void cups_filter_print(struct gurich_usb * g, char ** argv)
 	psbeg = 0;
 	pslen = 0;
 	ps = malloc(8192);
+	gurich_alloc_check(ps);
 	gurich_alloc_set(ps);
 
 	psf = cupsTempFd(psfn, BUFSIZ);
@@ -132,6 +137,7 @@ static void cups_filter_print(struct gurich_usb * g, char ** argv)
 	while ((psread = read(0, psbuf, 8192)) > 0)
 	{
 		ps = realloc(ps, pslen += psread);
+		gurich_alloc_check(ps);
 		for (unsigned short int r = 0; r < psread; ++r, ++psbeg) {
 			ps[psbeg] = psbuf[r];
 		}
@@ -169,24 +175,29 @@ int main(int argc, char ** argv)
 	if (arg[0] == '-')
 	{
 		init_msg();
+
+		#ifndef _NO_USB
 		check_printer_usb(&g);
 
 		if (!g.initialized) {
 			fprintf(stderr, "Could not find the printer. Quitting.\n\n");
 			exit(-1);
 		}
+		#endif
 
 		switch(arg[1])
 		{
 			case 'p':
 				nofilter_print(&g, argc, argv);
 				break;
+			#ifndef _NO_USB
 			case 's':
 				display_status(&g);
 				break;
 			case 't':
 				gurich_testpage(&g);
 				break;
+			#endif
 			case 'h':
 				display_usage(argv[0], false);
 				break;

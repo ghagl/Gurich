@@ -3,7 +3,7 @@
 				Gurich
 	**	Ricoh SP110 series driver **
 
-	Copyright (C) 2016, 2017 Gustaf Haglund <ghaglund@bahnhof.se>
+	Copyright (C) 2016, 2017 Gustaf Haglund <kontakt@ghaglund.se>
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -72,6 +72,7 @@ size_t gurich_dirent_fs(
 	dirent_mem_fail:
 		puts("Can't allocate memory (RAM). Quitting.");
 		return 0;
+		/* Expecting the function calling gurich_dirent_fs to then exit gracefully. */
 }
 
 bool gurich_dir_checkup()

@@ -3,7 +3,7 @@
 				Gurich
 	**	Ricoh SP110 series driver **
 
-	Copyright (C) 2016, 2017 Gustaf Haglund <ghaglund@bahnhof.se>
+	Copyright (C) 2016, 2017 Gustaf Haglund <kontakt@ghaglund.se>
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -22,6 +22,13 @@
 
 #include <gurich.h>
 
+/*
+ *
+ * Needed in order to be able to copy data,
+ * from a certain point in src.
+ * Memcpy doesn't provide this functionality.
+ *
+ */
 void data_modify(
 	struct gurich_transferdata *data,
 	const char *src,
@@ -42,6 +49,7 @@ void data_modify(
 
 bool check_printer_status(struct gurich_usb * g)
 {
+	#ifndef _NO_USB
 	struct gurich_status data = gurich_status(g);
 
 	if (strcmp((char*)data.status, "BAD") == 0) {
@@ -54,6 +62,7 @@ bool check_printer_status(struct gurich_usb * g)
 		fprintf(stderr, "ERROR: Not sufficient level of toner (0%% left of toner). Quitting.\n");
 		return false;
 	}
+	#endif
 
 	return true;
 }
@@ -62,7 +71,7 @@ void do_send_usb(
 	struct gurich_usb * g,
 	struct gurich_transferdata * usbdata)
 {
-	#ifndef _NO_PRINT_USB
+	#ifndef _NO_USB
 	if (g->initialized == false) {
 		return;
 	}
@@ -74,6 +83,8 @@ void do_send_usb(
 
 	totSize = usbdata->begin, tsSize = 0, tsStart = 0;
 	receivedLength = 0;
+
+	//fprintf(stderr, "DEBUG: %lu totSize\n", totSize);
 
 	while (totSize != 0)
 	{
@@ -88,10 +99,11 @@ void do_send_usb(
 			tBuf[c] = usbdata->data[i];
 
 		tBuf[tsSize] = '\0';
+		//memcpy(tBuf, usbdata->data, tsSize);
 
 		libusb_bulk_transfer (g->device_handle, 0x01, tBuf, tsSize, &receivedLength, 5000);
 
-		#ifdef _USB_DEBUG
+		#ifdef _DEBUG
 			printf ("receivedLength: %d, tsStart: %zu, totSize: %zu, tsSize %zu\n", receivedLength, tsStart, totSize, tsSize);
 		#endif
 

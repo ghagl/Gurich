@@ -3,7 +3,7 @@
 				Gurich
 	**	Ricoh SP110 series driver **
 
-	Copyright (C) 2016, 2017 Gustaf Haglund <ghaglund@bahnhof.se>
+	Copyright (C) 2016, 2017 Gustaf Haglund <kontakt@ghaglund.se>
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #define __GURICH_PRINT__H
 
 #define PRINTER_VENDOR_ID         0x05ca
+/* The USB vendor ID for Ricoh. */
 #define PRINTER_LIBUSB_DEBUG      3
 
 #define PRINTER_STANDARD_MEDIATYPE		"PLAINRECYCLE"
@@ -36,7 +37,7 @@
 
 #define PRINTER_START	0x1b, 0x25, 0x2d, 0x31, 0x32, 0x33, 0x34, 0x35, 0x58, 0x40, 0x50, 0x4a, 0x4c, 0x0d, 0x0a
 #define PRINTER_START_FORMAT "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c"
-#define PRINTER_PAGE_END "@PJL SET PAGESTATUS=END\r\n"
+#define PRINTER_PAGE_END "@PJL SET DOTCOUNT=10\r\n@PJL SET PAGESTATUS=END\r\n"
 #define PRINTER_END	"@PJL EOJ\r\n%-12345X\r\n"
 
 #define PRINTER_PBM_DIR "temp/pbm/"

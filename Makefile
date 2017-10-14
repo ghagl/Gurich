@@ -2,7 +2,7 @@
 ##				Gurich
 ##	**	Ricoh SP110 series driver **
 ##
-##	Copyright (C) 2016, 2017 Gustaf Haglund <ghaglund@bahnhof.se>
+##	Copyright (C) 2016, 2017 Gustaf Haglund <kontakt@ghaglund.se>
 ##
 ##	This program is free software: you can redistribute it and/or modify
 ##	it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
 ##	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-DEBUG = -D_DEBUG -g3 -ggdb -fvar-tracking
-CC = gcc -Wall -pedantic -std=gnu99 -I/usr/local/include $(DEBUG)
+DEBUG = -D_DEBUG -D_NO_USB -g3 -ggdb -fvar-tracking
+CC = gcc -Wall -pedantic -std=gnu99 -I/usr/local/include
 LIBS = $(shell pkg-config --cflags libusb-1.0)
 FINAL_LIBS=$(shell pkg-config --libs libusb-1.0) -ljbig -lcups
 
 BIN = bin/gurich
 BIN_CBACKEND = bin/gurich_cbackend
 
-CFLAGS = -Isrc $(LIBS) #-D_DEBUG -D_NO_PRINT_USB
+CFLAGS = -Isrc $(LIBS)
 
 CBACKEND_DEPEND = src/prntother.o src/basic.o src/prntcommon.o
 
@@ -34,13 +34,16 @@ all: $(patsubst src/%.c, src/%.o,$(wildcard src/*.c)) $(patsubst src/cbackend/%.
 	$(CC) $(CFLAGS) -o $(BIN) src/*.o  $(FINAL_LIBS)
 	$(CC) $(CFLAGS) -o $(BIN_CBACKEND) $(CBACKEND_DEPEND) src/cbackend/*.o $(FINAL_LIBS)
 
+debug:
+	CFLAGS="-Isrc $(LIBS) $(DEBUG)" make
+
 dev:
 	rm src/*.o
 	rm src/cbackend/*.o
 
 cups: dev all
 	sudo cp $(BIN) /usr/lib/cups/filter/
-	sudo cp $(BIN_CBACKEND) /usr/lib/cups/backend/
+	sudo cp $(BIN_CBACKEND) /usr/lib/cups/backend/gurich
 
 clean:
 	rm src/*.o

@@ -3,7 +3,7 @@
 				Gurich
 	**	Ricoh SP110 series driver **
 
-	Copyright (C) 2016, 2017 Gustaf Haglund <ghaglund@bahnhof.se>
+	Copyright (C) 2016, 2017 Gustaf Haglund <kontakt@ghaglund.se>
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -44,10 +44,11 @@ void gurich_prnt
 	struct gurich_files fs;
 	struct gurich_transferdata sendbunker;
 
-	struct tm tme;
+	struct tm * tme;
+	time_t t;
+	char datetime[32 + 1];
 
 	FILE *pbmObj;
-	time_t t;
 
 	char page[250];
 
@@ -59,19 +60,16 @@ void gurich_prnt
 	size_t jbigSize;
 
 	t = time(NULL);
-	tme = *localtime(&t);
+	tme = localtime(&t);
+	strftime(datetime, sizeof(datetime), "%Y/%m/%d %H:%M:%S", tme);
 
-	sendbunker.data = malloc((beginlen = (250 + strlen(psfile))));
+	sendbunker.data = malloc((beginlen = (100 + strlen(psfile))));
 	fs.files = malloc(10);
-	jbg.jbig = malloc(1);
-	jbg.jbiglen = 0;
 
 	gurich_alloc_check(sendbunker.data);
 	gurich_alloc_set(sendbunker.data);
 	gurich_alloc_check(fs.files);
 	gurich_alloc_set(fs.files);
-	gurich_alloc_check(jbg.jbig);
-	gurich_alloc_set(jbg.jbig);
 
 	fsfiles = 0;
 
@@ -79,13 +77,14 @@ void gurich_prnt
 	jbigSize = 0;
 
 	fsfiles = gurich_dirent_fs(GURICH_TEMP_DIR, &fs, "pbm");
+	if (fsfiles == 0) goto cleanup;
 
 	snprintf(
 		sendbunker.data,
 		beginlen,
 
 		PRINTER_START_FORMAT \
-		"@PJL SET TIMESTAMP=%d/%d/%d %d:%d:%d\r\n" \
+		"@PJL SET TIMESTAMP=%s\r\n" \
 		"@PJL SET FILENAME=%s\r\n" \
 		"@PJL SET COMPRESS=JBIG\r\n" \
 		"@PJL SET USERNAME=%s\r\n" \
@@ -93,7 +92,7 @@ void gurich_prnt
 		"@PJL SET HOLD=%s\r\n",
 
 		PRINTER_START,
-		tme.tm_year + 1900, tme.tm_mon + 1, tme.tm_mday, tme.tm_hour, tme.tm_min, tme.tm_sec,
+		datetime,
 		psfile,
 		username,
 		PRINTER_STANDARD_COVER,
@@ -110,16 +109,28 @@ void gurich_prnt
 		fprintf(stderr, "DEBUG: %s\n", fs.files[fsl]);
 		#endif
 
+		fprintf(stderr, "INFO: Preparing page %lu\n", fsl+1);
+
 		if (pbmObj == NULL) {
-			fprintf(stderr, "Can't open the pbm file. Quitting.\n");
+			fprintf(stderr, "DEBUG: Can't open the pbm file. Quitting.\n");
 			return;
 		}
 
+		jbg.jbig = malloc(1);
+		jbg.jbiglen = 0;
+
+		gurich_alloc_check(jbg.jbig);
+		gurich_alloc_set(jbg.jbig);
+
 		gurich_jbg(pbmObj, &pbm, &jbg);
 
-		if (jbg.jbiglen == 0) {
-			puts("Something did happen with the JBIG image generation which this driver depend upon. Quitting.");
-			return;
+		if (jbg.jbiglen == 0)
+		{
+			fprintf(stderr, "CRIT: Something did happen with the JBIG image generation which this driver depend upon. Quitting.\n");
+			free(jbg.jbig);
+			unlink(fs.files[fsl]);
+			free(fs.files[fsl]);
+			goto cleanup;
 		}
 
 		fclose(pbmObj);
@@ -184,6 +195,7 @@ void gurich_prnt
 		/* Clean up. */
 		unlink(fs.files[fsl]);
 		free(fs.files[fsl]);
+		free(jbg.jbig);
 	}
 
 	if (fsfiles > 0) {
@@ -191,18 +203,23 @@ void gurich_prnt
 	}
 
 	#ifdef _DEBUG
-	FILE * f = fopen(GURICH_TEMP_DIR"pjl.bin", "w+");
-	fwrite(sendbunker.data, sendbunker.begin, 1, f);
-	fclose(f);
+	if (!cupsfilter) {
+		FILE * f = fopen(GURICH_TEMP_DIR"pjl.bin", "w+");
+		fwrite(sendbunker.data, sendbunker.begin, 1, f);
+		fclose(f);
+	}
 	#endif
 
 	/* Send! */
 	if (!cupsfilter) {
 		do_send_usb(g, &sendbunker);
+	} else {
+		fwrite(sendbunker.data, sendbunker.begin, 1, stdout);
 	}
 
-	free(sendbunker.data);
+	cleanup:
+		free(sendbunker.data);
 
-	if (fsfiles > 0)
-		free(fs.files);
+		if (fsfiles > 0)
+			free(fs.files);
 }

@@ -3,7 +3,7 @@
 				Gurich
 	**	Ricoh SP110 series driver **
 
-	Copyright (C) 2016, 2017 Gustaf Haglund <ghaglund@bahnhof.se>
+	Copyright (C) 2016, 2017 Gustaf Haglund <kontakt@ghaglund.se>
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -22,12 +22,6 @@
 
 #include <gurich.h>
 
-/*
- * TODO: Evaluate the system() call,
- * due to concerns over eventual environment spoofing
- *
-*/
-
 void gurich_workaround_pbmgen(
 	struct gurich_usb * g, const char * res,
 	char * papertype, const char * psfile)
@@ -45,13 +39,15 @@ void gurich_workaround_pbmgen(
 	snprintf(
 		gs_cmd,
 		250,
-		"/usr/bin/env gs -sDEVICE=pbmraw -sOutputFile=%s%%03d-page.pbm "
+		"/usr/bin/gs -sDEVICE=pbmraw -sOutputFile=%s%%03d-page.pbm "
 		"-r%s -dQUIET -dBATCH -dNOPAUSE -sPAPERSIZE=%s %s",
 		GURICH_TEMP_DIR,
 		res,
 		papertype,
 		psfile
 	);
+
+	//syslog (LOG_NOTICE, gs_cmd);
 
 	#ifdef _DEBUG
 	fprintf(stderr, "DEBUG: gs_cmd %s\n", gs_cmd);

@@ -8,10 +8,9 @@ Contributions to this project are welcome, but please follow the code style used
 
 In order to install this driver, please see the INSTALL file.
 
-
 If you want a driver with warranty, then use Ricoh's driver for Microsoft Windows.
 
-I am not affilated with nor employed by Ricoh, this project is done in my spare time.
+I am neither affilated with nor employed by Ricoh, this project is done in my spare time.
 All trademarks mentioned in this project are owned by their respective owner.
 
 ## Features
@@ -20,10 +19,13 @@ All trademarks mentioned in this project are owned by their respective owner.
 * Toner reports (how much toner is left)
 * Can print the printer's built-in testpage
 
-The support for CUPS is limited and usage of Gurich with CUPS should be generally avoided.
+The support for CUPS is limited. There's a backend and filter you can use,
+but the options for e.g. paper type (A4, A5, etc.) are currently not implemented.
 
 ## Usage
-You will store usually postscript files in printfiles/ and then let the driver do the job.
+You will store usually postscript files in printfiles/ and then letting the driver do the job,
+otherwise you can pair together the PPD file in ppd/ with CUPS. See the INSTALL file.
+
 PDFs work, too.
 
 An example for printing:
@@ -46,7 +48,3 @@ For other use cases, e.g seeing how much toner is left:
 
 You might need to make a rule for udev in order to avoid running gurich with root privileges,
 on GNU/Linux-based systems.
-
-## Thanks to
-Serge V Shistarev for the PPD file,
-but due to licensing difficulties there is instead a script for the actual PPD file.

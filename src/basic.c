@@ -3,7 +3,7 @@
 				Gurich
 	**	Ricoh SP110 series driver **
 
-	Copyright (C) 2016, 2017 Gustaf Haglund <ghaglund@bahnhof.se>
+	Copyright (C) 2016, 2017 Gustaf Haglund <kontakt@ghaglund.se>
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -22,21 +22,25 @@
 
 #include <gurich.h>
 
-void printer_usb(struct gurich_usb * g, uint64_t idProduct)
+/*
+ *
+ * Expects graceful error handling due to g->initalized.
+ *
+ */
+#ifndef _NO_USB
+static void printer_usb(struct gurich_usb * g, struct libusb_device_descriptor devdesc)
 {
 	char libusb_strerror[128];
 	int libusb_error;
 
 	libusb_set_debug(g->ctx, PRINTER_LIBUSB_DEBUG);
 
-	g->device_handle = libusb_open_device_with_vid_pid(g->ctx, PRINTER_VENDOR_ID, idProduct);
+	g->idProduct = devdesc.idProduct;
+	g->iSerialNumber = devdesc.iSerialNumber;
+	g->device_handle = libusb_open_device_with_vid_pid(g->ctx, PRINTER_VENDOR_ID, devdesc.idProduct);
 
-	if (g->device_handle == NULL)
-	{
-		libusb_close(g->device_handle);
-		libusb_exit(g->ctx);
-		fprintf(stderr, "Something did happen with the printer. Quitting.\n\n");
-		exit(-1);
+	if (g->device_handle == NULL) {
+		goto libusb_fail;
 	}
 
 	g->device = libusb_get_device(g->device_handle);
@@ -57,7 +61,7 @@ void printer_usb(struct gurich_usb * g, uint64_t idProduct)
 	return;
 
 	libusb_fail:
-		snprintf(libusb_strerror, 128, "%s %s", "ERROR: ", libusb_error_name(libusb_error));
+		snprintf(libusb_strerror, 128, "ERROR: %s", libusb_error_name(libusb_error));
 
 		/*
 		libusb_release_interface(g->device_handle, GURICH_USB_INTERFACE);
@@ -65,20 +69,28 @@ void printer_usb(struct gurich_usb * g, uint64_t idProduct)
 		libusb_close(g->device_handle);
 		*/
 
-		fprintf(stderr, "Something went wrong with libusb (%s). Quitting.\n\n", libusb_strerror);
-		exit(-1);
-}
+		libusb_close(g->device_handle);
+		libusb_exit(g->ctx);
 
+		fprintf(stderr, "Something went wrong with libusb (%s). Quitting.\n\n", libusb_strerror);
+}
+#endif
+
+/*
+ *
+ * Limited to only supporting one connected Ricoh printer,
+ * when using the CLI. The CUPS backend can handle more printers.
+ */
 void check_printer_usb(struct gurich_usb * g)
 {
+	#ifndef _NO_USB
 	libusb_device **list;
 	struct libusb_device_descriptor devdesc;
 	ssize_t numusbdevs, i, err;
 
 	err = libusb_init(&g->ctx);
 	if (err) {
-		fprintf(stderr, "Can't initalize libusb\n\n");
-		exit(-1);
+		return;
 	}
 	numusbdevs = libusb_get_device_list(g->ctx, &list);
 
@@ -95,13 +107,15 @@ void check_printer_usb(struct gurich_usb * g)
 
 		if (devdesc.idVendor == PRINTER_VENDOR_ID) {
 			/* Found a Ricoh printer. */
-			printer_usb(g, devdesc.idProduct);
+			printer_usb(g, devdesc);
+			break;
 		}
 	}
 
 	if (numusbdevs >= 0) {
 		libusb_free_device_list(list, 1);
 	}
+	#endif
 }
 
 void cleanup_usb(struct gurich_usb * g)
