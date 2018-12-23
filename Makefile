@@ -26,7 +26,7 @@ FINAL_LIBS=$(shell pkg-config --libs libusb-1.0) -ljbig -lcups
 BIN = bin/gurich
 BIN_CBACKEND = bin/gurich_cbackend
 
-CFLAGS = -Isrc $(LIBS)
+CFLAGS = -Isrc -Ilibjbig -Llibjbig $(LIBS)
 
 CBACKEND_DEPEND = src/prntother.o src/basic.o src/prntcommon.o
 
