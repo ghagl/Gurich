@@ -59,7 +59,7 @@ jobs:
     #    uses a compiled language
 
     - run: |
-        apt-get install libusb-dev libcups-dev jbigkit ghostscript
+        sudo apt-get install libusb-dev libcups-dev jbigkit ghostscript
         make
     #   make bootstrap
     #   make release
