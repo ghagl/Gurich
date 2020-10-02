@@ -60,6 +60,7 @@ jobs:
 
     - run: |
         sudo apt-get install libusb-1.0-0-dev libcups2-dev jbigkit-bin ghostscript
+        mkdir bin
         make
     #   make bootstrap
     #   make release
