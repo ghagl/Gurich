@@ -138,7 +138,7 @@ static void cups_filter_print(struct gurich_usb * g, char ** argv)
 	{
 		ps = realloc(ps, pslen += psread);
 		gurich_alloc_check(ps);
-		for (unsigned short int r = 0; r < psread; ++r, ++psbeg) {
+		for (size_t r = 0; r < psread; ++r, ++psbeg) {
 			ps[psbeg] = psbuf[r];
 		}
 	}
