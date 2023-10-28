@@ -21,7 +21,7 @@
 DEBUG = -D_DEBUG -D_NO_USB -g3 -ggdb -fvar-tracking
 CC = gcc -Wall -pedantic -std=gnu99 -I/usr/local/include
 LIBS = $(shell pkg-config --cflags libusb-1.0)
-FINAL_LIBS=$(shell pkg-config --libs libusb-1.0) -ljbig -lcups
+FINAL_LIBS=$(shell pkg-config --libs libusb-1.0) -ljbig
 
 BIN = bin/gurich
 BIN_CBACKEND = bin/gurich_cbackend

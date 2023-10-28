@@ -95,6 +95,7 @@ static void nofilter_print(struct gurich_usb * g, int argc, char ** argv)
 	gurich_prnt(g, get_username(), argv[3], argv[2], argv[4], argv[5], false);
 }
 
+#ifdef _CUPS
 static void cups_filter_print(struct gurich_usb * g, char ** argv)
 {
 	int psf;
@@ -158,6 +159,7 @@ static void cups_filter_print(struct gurich_usb * g, char ** argv)
 
 	gurich_prnt(g, username, res, psfn, copies, papertype, true);
 }
+#endif
 
 int main(int argc, char ** argv)
 {
@@ -207,7 +209,9 @@ int main(int argc, char ** argv)
 
 		puts("");
 	} else {
+		#ifdef _CUPS
 		cups_filter_print(&g, argv);
+		#endif
 	}
 
 	cleanup_usb(&g);

@@ -39,8 +39,8 @@
 
 #include <jbig.h>
 #include <libusb.h>
-#include <cups/cups.h>
-#include <cups/backend.h>
+//#include <cups/cups.h>
+//#include <cups/backend.h>
 
 #include <prnt.h>
 

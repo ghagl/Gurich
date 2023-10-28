@@ -39,7 +39,7 @@ void gurich_workaround_pbmgen(
 	snprintf(
 		gs_cmd,
 		250,
-		"/usr/bin/gs -sDEVICE=pbmraw -sOutputFile=%s%%03d-page.pbm "
+		"/usr/bin/env gs -sDEVICE=pbmraw -sOutputFile=%s%%03d-page.pbm "
 		"-r%s -dQUIET -dBATCH -dNOPAUSE -sPAPERSIZE=%s %s",
 		GURICH_TEMP_DIR,
 		res,
